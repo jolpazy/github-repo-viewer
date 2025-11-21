@@ -1,0 +1,14 @@
+{
+  "name": "@repo-viewer/mobile",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "expo start"
+  },
+  "dependencies": {
+    "@repo-viewer/shared": "1.0.0",
+    "expo": "~51.0.0",
+    "react": "18.2.0",
+    "react-native": "0.76.0"
+  }
+}
