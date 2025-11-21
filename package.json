@@ -4,9 +4,11 @@
   "version": "1.0.0",
   "workspaces": [
     "packages/web",
-    "packages/shared"
+    "packages/shared",
+    "packages/mobile"
   ],
   "scripts": {
-    "web": "npm run start --workspace web"
+    "web": "npm run start --workspace web",
+    "mobile": "npm run start --workspace mobile"
   }
 }
