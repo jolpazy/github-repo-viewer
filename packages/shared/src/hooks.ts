@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { searchRepositories, getRepository } from "./api";
+import { searchRepositories, getRepositoryById } from "./api";
 import { SearchParams } from "./types";
 
 export const useSearchRepositories = (params: SearchParams) => {
@@ -12,11 +12,11 @@ export const useSearchRepositories = (params: SearchParams) => {
   });
 };
 
-export const useRepository = (owner: string, repo: string) => {
+export const useRepository = (id: number | undefined) => {
   return useQuery({
-    queryKey: ["repository", owner, repo],
-    queryFn: () => getRepository(owner, repo),
+    queryKey: ["repository", id],
+    queryFn: () => getRepositoryById(id!),
     staleTime: 5 * 60 * 1000,
-    enabled: !!owner && !!repo,
+    enabled: typeof id === "number" && id > 0,
   });
 };

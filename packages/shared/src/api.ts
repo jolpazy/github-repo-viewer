@@ -29,10 +29,9 @@ export const searchRepositories = async (
   return response.data;
 };
 
-export const getRepository = async (
-  owner: string,
-  repo: string
+export const getRepositoryById = async (
+  id: number
 ): Promise<GitHubRepository> => {
-  const response = await api.get<GitHubRepository>(`/repos/${owner}/${repo}`);
+  const response = await api.get<GitHubRepository>(`/repositories/${id}`);
   return response.data;
 };
