@@ -1,17 +1,14 @@
-import "./App.css";
-import { useSearchRepositories } from "@repo-viewer/shared/dist";
+import { Routes, Route } from "react-router-dom";
+import SearchScreen from "./screens/SearchScreen";
+import DetailsScreen from "./screens/DetailsScreen";
 
 function App() {
-  const { data, isLoading, error } = useSearchRepositories({
-    query: "react",
-  });
-
-  const count = data?.items?.length ?? 0;
-
-  if (isLoading) return <p>Loading…</p>;
-  if (error) return <p>Something went wrong.</p>;
-
-  return <p>Hi, I fetched {count} projects.</p>;
+  return (
+    <Routes>
+      <Route path="/" element={<SearchScreen />} />
+      <Route path="/repo/:id" element={<DetailsScreen />} />
+    </Routes>
+  );
 }
 
 export default App;
