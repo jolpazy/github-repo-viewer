@@ -1,6 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import SearchScreen from "./screens/SearchScreen";
 import DetailsScreen from "./screens/DetailsScreen";
+import "./App.css";
 
 function App() {
   return (
