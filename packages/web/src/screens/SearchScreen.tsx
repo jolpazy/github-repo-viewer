@@ -12,6 +12,9 @@ import {
   DEBOUNCE_MS,
 } from "@repo-viewer/shared/dist";
 
+import { useSelector, useDispatch } from "react-redux";
+import { RootState, AppDispatch, setSearchQuery } from "@repo-viewer/shared";
+
 const Wrapper = styled.div`
   background-color: ${colors.reactGrey};
   color: ${colors.white};
@@ -73,16 +76,19 @@ const Result = styled.p`
 `;
 
 const SearchScreen = () => {
-  const [inputValue, setInputValue] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
+  const dispatch = useDispatch<AppDispatch>();
+
+  const searchQuery = useSelector((state: RootState) => state.app.searchQuery);
+
+  const [inputValue, setInputValue] = useState(searchQuery);
 
   useEffect(() => {
     const handler = setTimeout(() => {
-      setSearchQuery(inputValue.trim());
+      dispatch(setSearchQuery(inputValue.trim()));
     }, DEBOUNCE_MS);
 
     return () => clearTimeout(handler);
-  }, [inputValue]);
+  }, [inputValue, dispatch]);
 
   const { data, isLoading, error } = useSearchRepositories({
     query: searchQuery,
