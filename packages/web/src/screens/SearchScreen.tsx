@@ -11,6 +11,7 @@ import {
   space,
   radii,
   DEBOUNCE_MS,
+  ITEMS_PER_PAGE,
 } from "@repo-viewer/shared/dist";
 
 import { useSelector, useDispatch } from "react-redux";
@@ -85,13 +86,35 @@ const Result = styled.p`
   text-align: center;
 `;
 
+const LoadMoreButton = styled.button`
+  margin-top: ${space.lg}px;
+  padding: ${space.sm}px ${space.lg}px;
+  font-size: ${fontSizes.md}px;
+  border-radius: ${radii.md}px;
+  background: ${colors.reactBlue};
+  color: ${colors.white};
+  border: none;
+  cursor: pointer;
+  transition: 0.2s ease;
+
+  &:hover {
+    background: ${colors.reactLightGrey};
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+`;
+
 const SearchScreen = () => {
   const dispatch = useDispatch<AppDispatch>();
   const searchQuery = useSelector((state: RootState) => state.app.searchQuery);
-
   const favorites = useSelector((state: RootState) => state.app.favorites);
 
   const [inputValue, setInputValue] = useState(searchQuery);
+  const [page, setPage] = useState(1);
+  const [results, setResults] = useState<any[]>([]);
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -101,11 +124,24 @@ const SearchScreen = () => {
     return () => clearTimeout(handler);
   }, [inputValue, dispatch]);
 
-  const { data, isLoading, error } = useSearchRepositories({
+  const { data, isLoading, isFetching, error } = useSearchRepositories({
     query: searchQuery,
+    page,
+    per_page: ITEMS_PER_PAGE,
   });
 
-  const results = data?.items ?? [];
+  useEffect(() => {
+    if (!data?.items) return;
+
+    setResults((prev) => (page === 1 ? data.items : [...prev, ...data.items]));
+  }, [data, page]);
+
+  useEffect(() => {
+    setPage(1);
+    setResults([]);
+  }, [searchQuery]);
+
+  const hasMore = (data?.items?.length ?? 0) === ITEMS_PER_PAGE;
 
   return (
     <Wrapper>
@@ -128,22 +164,34 @@ const SearchScreen = () => {
         />
       </SearchContainer>
 
-      {isLoading && <Result>Loading…</Result>}
+      {isLoading && page === 1 && <Result>Loading…</Result>}
       {error && <Result>Something went wrong.</Result>}
 
       {results.length > 0 &&
-        results.map(({ id, full_name, stargazers_count, html_url }) => (
-          <RepoCard
-            id={id}
-            key={id}
-            name={full_name}
-            stars={stargazers_count}
-            url={html_url}
-          />
-        ))}
+        results.map(
+          ({ id, full_name, stargazers_count, html_url, description }) => (
+            <RepoCard
+              id={id}
+              key={id}
+              name={full_name}
+              stars={stargazers_count}
+              url={html_url}
+              description={description}
+            />
+          )
+        )}
 
       {searchQuery && !isLoading && results.length === 0 && (
         <Result>No repositories found.</Result>
+      )}
+
+      {results.length > 0 && (
+        <LoadMoreButton
+          disabled={isFetching || !hasMore}
+          onClick={() => setPage((prev) => prev + 1)}
+        >
+          {isFetching ? "Loading…" : hasMore ? "Load more" : "No more results"}
+        </LoadMoreButton>
       )}
     </Wrapper>
   );

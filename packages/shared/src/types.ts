@@ -17,13 +17,13 @@ export interface GitHubSearchResponse {
   items: GitHubRepository[];
 }
 
-export interface SearchParams {
+export type SearchParams = {
   query: string;
   page?: number;
   per_page?: number;
   filters?: {
     language?: string;
-    sort?: "stars" | "forks" | "updated";
+    sort?: string;
     order?: "asc" | "desc";
   };
-}
+};

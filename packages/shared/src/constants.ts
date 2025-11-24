@@ -31,6 +31,6 @@ export const radii = {
 
 export const DEBOUNCE_MS = 2000;
 
-export const ITEMS_PER_PAGE = 30;
+export const ITEMS_PER_PAGE = 5;
 
 export const REFETCH_MS = 60 * 1000;
