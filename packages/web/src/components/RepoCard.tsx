@@ -26,7 +26,6 @@ const Card = styled.div`
   margin: ${space.sm}px 0;
   text-align: center;
   transition: 0.2s ease;
-  cursor: pointer;
 `;
 
 const TopRow = styled.div`
@@ -68,6 +67,10 @@ const Description = styled.p`
   opacity: 0.85;
   margin-bottom: ${space.sm}px;
   color: ${colors.white};
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  text-align: center;
 `;
 
 const Stars = styled.p`
@@ -91,11 +94,18 @@ const RepoCard = ({ id, name, description, stars }: RepoCardProps) => {
   };
 
   return (
-    <Card onClick={() => navigate(`/repo/${id}`)}>
+    <Card>
       <TopRow>
         <Heart onClick={toggleFavorite}>{isFavorite ? "❤️" : "🤍"}</Heart>
       </TopRow>
-      <Name>{name}</Name>
+      <Name
+        onClick={(e) => {
+          e.stopPropagation();
+          navigate(`/repo/${id}`);
+        }}
+      >
+        {name}
+      </Name>
       {description && <Description>{description}</Description>}
       <Stars>⭐ {stars} stars</Stars>
     </Card>

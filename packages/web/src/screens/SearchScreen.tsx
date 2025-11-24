@@ -1,9 +1,10 @@
 import { useState, useEffect, useMemo } from "react";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
+
 import { debounce } from "lodash";
 import { useSearchRepositories } from "@repo-viewer/shared/dist";
-import RepoCard from "./components/RepoCard";
+import RepoCard from "../components/RepoCard";
+import { NavLink } from "../components/NavLink";
 
 import {
   title,
@@ -21,21 +22,18 @@ import { RootState, AppDispatch, setSearchQuery } from "@repo-viewer/shared";
 const Wrapper = styled.div`
   background-color: ${colors.reactGrey};
   color: ${colors.white};
-  min-height: 100vh;
+  height: 100vh;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: ${space.xl}px;
   font-family: "Inter", system-ui, sans-serif;
+  overflow: hidden;
 `;
 
-const NavLink = styled(Link)`
-  text-decoration: none;
-  color: ${colors.white};
-  &:hover {
-    background: ${colors.reactLightGrey};
-  }
+const FavoritesLink = styled(NavLink)`
+  font-size: ${fontSizes.lg}px;
 `;
 
 const Title = styled.h1`
@@ -59,7 +57,7 @@ const SearchContainer = styled.div`
   align-items: center;
   padding: ${space.sm}px ${space.lg}px;
   gap: ${space.md}px;
-  margin-bottom: ${space.xl}px;
+  margin: ${space.xl}px auto;
 
   &:focus-within {
     opacity: 1;
@@ -117,6 +115,57 @@ const ResultsGrid = styled.div`
   max-width: 1200px;
 `;
 
+const Header = styled.header`
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: ${colors.reactGrey};
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: ${space.xs}px;
+  padding-bottom: ${space.xs}px;
+`;
+
+const ResultsWrapper = styled.div`
+  flex: 1;
+  width: 100%;
+  box-sizing: border-box;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  margin-top: ${space.lg}px;
+  background: transparent;
+
+  display: flex;
+  justify-content: center;
+  padding: 0 ${space.md}px;
+
+  &::-webkit-scrollbar {
+    width: 12px;
+  }
+  &::-webkit-scrollbar-track {
+    background: ${colors.reactGrey};
+    border-radius: 8px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: ${colors.reactLightGrey};
+    opacity: 0.12;
+    border-radius: 8px;
+    border: 3px solid transparent;
+    background-clip: padding-box;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    opacity: 0.22;
+  }
+
+  scrollbar-width: thin;
+  scrollbar-color: ${colors.reactLightGrey} ${colors.reactGrey};
+`;
+
 const SearchScreen = () => {
   const dispatch = useDispatch<AppDispatch>();
   const searchQuery = useSelector((state: RootState) => state.app.searchQuery);
@@ -161,15 +210,18 @@ const SearchScreen = () => {
 
   return (
     <Wrapper>
-      <Title>React</Title>
-      <Subtitle>
-        {title}
-        {favorites.length > 0 && (
-          <>
-            {" "}or go to: <NavLink to="/favorites">Favorites</NavLink>
-          </>
-        )}
-      </Subtitle>
+      <Header>
+        <Title>React</Title>
+        <Subtitle>
+          {title}
+          {favorites.length > 0 && (
+            <>
+              {" "}
+              or go to: <FavoritesLink to="/favorites">Favorites</FavoritesLink>
+            </>
+          )}
+        </Subtitle>
+      </Header>
 
       <SearchContainer>
         <SearchIcon>🔍</SearchIcon>
@@ -180,24 +232,26 @@ const SearchScreen = () => {
         />
       </SearchContainer>
 
-      {isLoading && <Result>Loading…</Result>}
-      {error && <Result>Something went wrong.</Result>}
+      <ResultsWrapper>
+        {isLoading && <Result>Loading…</Result>}
+        {error && <Result>Something went wrong.</Result>}
 
-      <ResultsGrid>
-        {allResults.length > 0 &&
-          allResults.map(
-            ({ id, full_name, stargazers_count, html_url, description }) => (
-              <RepoCard
-                id={id}
-                key={id}
-                name={full_name}
-                stars={stargazers_count}
-                url={html_url}
-                description={description ?? undefined}
-              />
-            )
-          )}
-      </ResultsGrid>
+        <ResultsGrid>
+          {allResults.length > 0 &&
+            allResults.map(
+              ({ id, full_name, stargazers_count, html_url, description }) => (
+                <RepoCard
+                  id={id}
+                  key={id}
+                  name={full_name}
+                  stars={stargazers_count}
+                  url={html_url}
+                  description={description ?? undefined}
+                />
+              )
+            )}
+        </ResultsGrid>
+      </ResultsWrapper>
 
       {debouncedInputValue && !isLoading && allResults.length === 0 && (
         <Result>No repositories found.</Result>

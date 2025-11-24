@@ -5,8 +5,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { colors, fontSizes, space } from "@repo-viewer/shared/dist";
 import { RootState } from "@repo-viewer/shared";
 import { useRepository } from "@repo-viewer/shared/dist";
-import RepoCard from "./components/RepoCard";
-import { BackLink } from "./components/BackLink";
+import RepoCard from "../components/RepoCard";
+import { NavLink } from "../components/NavLink";
 
 const Wrapper = styled.div`
   background-color: ${colors.reactGrey};
@@ -74,7 +74,7 @@ const FavoritesScreen = () => {
 
   return (
     <Wrapper>
-      <BackLink to="/">{`< Back`}</BackLink>
+      <NavLink to="/">{`< Back`}</NavLink>
       <Title>Favorites ❤️</Title>
 
       {favorites.length === 0 && <Empty>No favorites yet</Empty>}

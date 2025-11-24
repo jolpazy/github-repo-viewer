@@ -12,7 +12,7 @@ import {
   addFavorite,
   removeFavorite,
 } from "@repo-viewer/shared";
-import { BackLink } from "./components/BackLink";
+import { NavLink } from "../components/NavLink";
 
 const Wrapper = styled.div`
   background-color: ${colors.reactLightGrey};
@@ -124,7 +124,7 @@ const DetailsScreen = () => {
   return (
     <Wrapper>
       <HeaderRow>
-        <BackLink to="/">{`< Back`}</BackLink>
+        <NavLink to="/">{`< Back`}</NavLink>
 
         <HeartButton onClick={toggleFavorite}>
           {isFavorite ? "❤️" : "🤍"}

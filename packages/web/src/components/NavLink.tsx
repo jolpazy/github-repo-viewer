@@ -2,7 +2,7 @@ import { colors, fontSizes, space } from "@repo-viewer/shared";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 
-export const BackLink = styled(Link)`
+export const NavLink = styled(Link)`
   align-self: flex-start;
   margin-bottom: ${space.lg}px;
   color: ${colors.reactBlue};
