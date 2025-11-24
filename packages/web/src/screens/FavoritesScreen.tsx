@@ -6,6 +6,7 @@ import { colors, fontSizes, space } from "@repo-viewer/shared/dist";
 import { RootState } from "@repo-viewer/shared";
 import { useRepository } from "@repo-viewer/shared/dist";
 import RepoCard from "./components/RepoCard";
+import { BackLink } from "./components/BackLink";
 
 const Wrapper = styled.div`
   background-color: ${colors.reactGrey};
@@ -18,23 +19,25 @@ const Wrapper = styled.div`
   padding: ${space.xl}px;
 `;
 
-const BackLink = styled(Link)`
-  align-self: flex-start;
-  margin-bottom: ${space.lg}px;
-  color: ${colors.reactBlue};
-  text-decoration: none;
-  font-size: ${fontSizes.lg}px;
-  font-weight: 600;
-
-  &:hover {
-    text-decoration: underline;
-  }
+const Title = styled.h1`
+  font-size: ${fontSizes.xl}px;
+  margin-bottom: ${space.xl}px;
+  margin-top: 0;
 `;
 
 const Empty = styled.p`
   font-size: ${fontSizes.md}px;
   opacity: 0.85;
   margin-top: ${space.xl}px;
+`;
+
+const FavoritesGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 350px);
+  gap: ${space.xl}px;
+  justify-content: center;
+  width: 100%;
+  max-width: 1200px;
 `;
 
 const FavoriteRepo = ({ id }: { id: number }) => {
@@ -72,12 +75,15 @@ const FavoritesScreen = () => {
   return (
     <Wrapper>
       <BackLink to="/">{`< Back`}</BackLink>
+      <Title>Favorites ❤️</Title>
 
-      {favorites.length === 0 && <Empty>No favorites yet ❤️</Empty>}
+      {favorites.length === 0 && <Empty>No favorites yet</Empty>}
 
-      {favorites.map((id) => (
-        <FavoriteRepo key={id} id={id} />
-      ))}
+      <FavoritesGrid>
+        {favorites.map((id) => (
+          <FavoriteRepo key={id} id={id} />
+        ))}
+      </FavoritesGrid>
     </Wrapper>
   );
 };

@@ -29,8 +29,8 @@ export const radii = {
   md: 8,
 };
 
-export const DEBOUNCE_MS = 2000;
+export const DEBOUNCE_MS = 300;
 
-export const ITEMS_PER_PAGE = 5;
+export const ITEMS_PER_PAGE = 15;
 
 export const REFETCH_MS = 60 * 1000;

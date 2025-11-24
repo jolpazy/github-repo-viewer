@@ -12,6 +12,7 @@ import {
   addFavorite,
   removeFavorite,
 } from "@repo-viewer/shared";
+import { BackLink } from "./components/BackLink";
 
 const Wrapper = styled.div`
   background-color: ${colors.reactLightGrey};
@@ -32,17 +33,6 @@ const HeaderRow = styled.div`
   justify-content: space-between;
   align-items: center;
   margin-bottom: ${space.lg}px;
-`;
-
-const BackLink = styled(Link)`
-  color: ${colors.reactBlue};
-  text-decoration: none;
-  font-size: ${fontSizes.lg}px;
-  font-weight: 600;
-
-  &:hover {
-    text-decoration: underline;
-  }
 `;
 
 const HeartButton = styled.button`

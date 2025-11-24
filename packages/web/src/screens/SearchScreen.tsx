@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
+import { debounce } from "lodash";
 import { useSearchRepositories } from "@repo-viewer/shared/dist";
 import RepoCard from "./components/RepoCard";
 
@@ -107,41 +108,56 @@ const LoadMoreButton = styled.button`
   }
 `;
 
+const ResultsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 350px);
+  gap: ${space.xl}px;
+  justify-content: center;
+  width: 100%;
+  max-width: 1200px;
+`;
+
 const SearchScreen = () => {
   const dispatch = useDispatch<AppDispatch>();
   const searchQuery = useSelector((state: RootState) => state.app.searchQuery);
   const favorites = useSelector((state: RootState) => state.app.favorites);
 
   const [inputValue, setInputValue] = useState(searchQuery);
-  const [page, setPage] = useState(1);
-  const [results, setResults] = useState<any[]>([]);
+  const [debouncedInputValue, setDebouncedInputValue] = useState(inputValue);
+
+  const debouncedSearch = useMemo(
+    () =>
+      debounce((value: string) => {
+        const trimmedValue = value.trim();
+        setDebouncedInputValue(trimmedValue);
+        dispatch(setSearchQuery(trimmedValue));
+      }, DEBOUNCE_MS),
+    [dispatch]
+  );
 
   useEffect(() => {
-    const handler = setTimeout(() => {
-      dispatch(setSearchQuery(inputValue.trim()));
-    }, DEBOUNCE_MS);
+    debouncedSearch(inputValue);
+  }, [inputValue, debouncedSearch]);
 
-    return () => clearTimeout(handler);
-  }, [inputValue, dispatch]);
+  useEffect(() => {
+    return () => {
+      debouncedSearch.cancel();
+    };
+  }, [debouncedSearch]);
 
-  const { data, isLoading, isFetching, error } = useSearchRepositories({
-    query: searchQuery,
-    page,
+  const {
+    data,
+    isLoading,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
+    error,
+  } = useSearchRepositories({
+    query: debouncedInputValue,
     per_page: ITEMS_PER_PAGE,
   });
 
-  useEffect(() => {
-    if (!data?.items) return;
-
-    setResults((prev) => (page === 1 ? data.items : [...prev, ...data.items]));
-  }, [data, page]);
-
-  useEffect(() => {
-    setPage(1);
-    setResults([]);
-  }, [searchQuery]);
-
-  const hasMore = (data?.items?.length ?? 0) === ITEMS_PER_PAGE;
+  const allResults = data?.pages.flatMap((page) => page.items) ?? [];
 
   return (
     <Wrapper>
@@ -150,7 +166,7 @@ const SearchScreen = () => {
         {title}
         {favorites.length > 0 && (
           <>
-            or go to: <NavLink to="/favorites">Favorites</NavLink>
+            {" "}or go to: <NavLink to="/favorites">Favorites</NavLink>
           </>
         )}
       </Subtitle>
@@ -164,33 +180,39 @@ const SearchScreen = () => {
         />
       </SearchContainer>
 
-      {isLoading && page === 1 && <Result>Loading…</Result>}
+      {isLoading && <Result>Loading…</Result>}
       {error && <Result>Something went wrong.</Result>}
 
-      {results.length > 0 &&
-        results.map(
-          ({ id, full_name, stargazers_count, html_url, description }) => (
-            <RepoCard
-              id={id}
-              key={id}
-              name={full_name}
-              stars={stargazers_count}
-              url={html_url}
-              description={description}
-            />
-          )
-        )}
+      <ResultsGrid>
+        {allResults.length > 0 &&
+          allResults.map(
+            ({ id, full_name, stargazers_count, html_url, description }) => (
+              <RepoCard
+                id={id}
+                key={id}
+                name={full_name}
+                stars={stargazers_count}
+                url={html_url}
+                description={description ?? undefined}
+              />
+            )
+          )}
+      </ResultsGrid>
 
-      {searchQuery && !isLoading && results.length === 0 && (
+      {debouncedInputValue && !isLoading && allResults.length === 0 && (
         <Result>No repositories found.</Result>
       )}
 
-      {results.length > 0 && (
+      {allResults.length > 0 && (
         <LoadMoreButton
-          disabled={isFetching || !hasMore}
-          onClick={() => setPage((prev) => prev + 1)}
+          disabled={isFetchingNextPage || !hasNextPage}
+          onClick={() => fetchNextPage()}
         >
-          {isFetching ? "Loading…" : hasMore ? "Load more" : "No more results"}
+          {isFetchingNextPage
+            ? "Loading…"
+            : hasNextPage
+            ? "Load more"
+            : "No more results"}
         </LoadMoreButton>
       )}
     </Wrapper>

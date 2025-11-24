@@ -23,7 +23,6 @@ const Card = styled.div`
   background: ${colors.reactLightGrey};
   padding: ${space.lg}px ${space.xl}px ${space.xl}px;
   border-radius: ${radii.md}px;
-  width: 350px;
   margin: ${space.sm}px 0;
   text-align: center;
   transition: 0.2s ease;
