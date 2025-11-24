@@ -5,6 +5,14 @@ import { useRepository } from "@repo-viewer/shared/dist";
 
 import { colors, fontSizes, space, radii } from "@repo-viewer/shared/dist";
 
+import { useSelector, useDispatch } from "react-redux";
+import {
+  RootState,
+  AppDispatch,
+  addFavorite,
+  removeFavorite,
+} from "@repo-viewer/shared";
+
 const Wrapper = styled.div`
   background-color: ${colors.reactLightGrey};
   color: ${colors.white};
@@ -17,17 +25,16 @@ const Wrapper = styled.div`
   padding: ${space.xl}px;
 `;
 
-const Avatar = styled.img`
-  width: 96px;
-  height: 96px;
-  border-radius: ${radii.pill}px;
-  object-fit: cover;
-  margin-bottom: ${space.md}px;
+const HeaderRow = styled.div`
+  width: 100%;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: ${space.lg}px;
 `;
 
 const BackLink = styled(Link)`
-  align-self: flex-start;
-  margin-bottom: ${space.lg}px;
   color: ${colors.reactBlue};
   text-decoration: none;
   font-size: ${fontSizes.lg}px;
@@ -36,6 +43,27 @@ const BackLink = styled(Link)`
   &:hover {
     text-decoration: underline;
   }
+`;
+
+const HeartButton = styled.button`
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: ${fontSizes.lg}px;
+  padding: 0;
+  color: ${colors.reactBlue};
+
+  &:hover {
+    opacity: 0.8;
+  }
+`;
+
+const Avatar = styled.img`
+  width: 96px;
+  height: 96px;
+  border-radius: ${radii.pill}px;
+  object-fit: cover;
+  margin-bottom: ${space.md}px;
 `;
 
 const View = styled.div`
@@ -60,10 +88,7 @@ const Owner = styled.p`
 
 const Description = styled.p`
   font-size: ${fontSizes.md}px;
-  opacity: 0.9;
-  margin-bottom: ${space.md}px;
 `;
-
 const Meta = styled.p`
   font-size: ${fontSizes.sm}px;
   opacity: 0.8;
@@ -82,6 +107,16 @@ const GithubLink = styled.a`
 const DetailsScreen = () => {
   const { id } = useParams<{ id: string }>();
   const repoId = Number(id);
+  const dispatch = useDispatch<AppDispatch>();
+
+  const favorites = useSelector((state: RootState) => state.app.favorites);
+  const isFavorite = favorites.includes(repoId);
+
+  const toggleFavorite = () => {
+    if (isFavorite) dispatch(removeFavorite(repoId));
+    else dispatch(addFavorite(repoId));
+  };
+
   const queryClient = useQueryClient();
 
   const cachedSearches = queryClient.getQueriesData<{ items?: any[] }>({
@@ -98,7 +133,13 @@ const DetailsScreen = () => {
 
   return (
     <Wrapper>
-      <BackLink to="/">{`< Back`}</BackLink>
+      <HeaderRow>
+        <BackLink to="/">{`< Back`}</BackLink>
+
+        <HeartButton onClick={toggleFavorite}>
+          {isFavorite ? "❤️" : "🤍"}
+        </HeartButton>
+      </HeaderRow>
 
       {isLoading && <p>Loading…</p>}
       {error && <p>Something went wrong.</p>}

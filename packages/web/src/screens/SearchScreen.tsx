@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import styled from "styled-components";
+import { Link } from "react-router-dom";
 import { useSearchRepositories } from "@repo-viewer/shared/dist";
 import RepoCard from "./components/RepoCard";
 
@@ -23,19 +24,27 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
   padding: ${space.xl}px;
   font-family: "Inter", system-ui, sans-serif;
+`;
+
+const NavLink = styled(Link)`
+  text-decoration: none;
+  color: ${colors.white};
+  &:hover {
+    background: ${colors.reactLightGrey};
+  }
 `;
 
 const Title = styled.h1`
   font-size: ${fontSizes.xl}px;
   margin-bottom: ${space.sm}px;
+  margin-top: 0;
 `;
 
 const Subtitle = styled.p`
   font-size: ${fontSizes.lg}px;
-  opacity: 0.8;
+  opacity: 0.85;
   margin-bottom: ${space.xl}px;
 `;
 
@@ -49,6 +58,7 @@ const SearchContainer = styled.div`
   padding: ${space.sm}px ${space.lg}px;
   gap: ${space.md}px;
   margin-bottom: ${space.xl}px;
+
   &:focus-within {
     opacity: 1;
     box-shadow: 0 0 0 2px ${colors.reactBlue};
@@ -77,8 +87,9 @@ const Result = styled.p`
 
 const SearchScreen = () => {
   const dispatch = useDispatch<AppDispatch>();
-
   const searchQuery = useSelector((state: RootState) => state.app.searchQuery);
+
+  const favorites = useSelector((state: RootState) => state.app.favorites);
 
   const [inputValue, setInputValue] = useState(searchQuery);
 
@@ -99,7 +110,14 @@ const SearchScreen = () => {
   return (
     <Wrapper>
       <Title>React</Title>
-      <Subtitle>{title}</Subtitle>
+      <Subtitle>
+        {title}
+        {favorites.length > 0 && (
+          <>
+            or go to: <NavLink to="/favorites">Favorites</NavLink>
+          </>
+        )}
+      </Subtitle>
 
       <SearchContainer>
         <SearchIcon>🔍</SearchIcon>
