@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import {
   StyleSheet,
   TextInput,
@@ -66,17 +66,20 @@ export default function SearchScreen() {
 
   const allResults = data?.pages.flatMap((page: any) => page.items) ?? [];
 
-  const renderItem = ({ item }: any) => (
-    <RepoCard
-      id={item.id}
-      name={item.full_name}
-      description={item.description}
-      stars={item.stargazers_count}
-      url={item.html_url}
-    />
+  const renderItem = useCallback(
+    ({ item }: any) => (
+      <RepoCard
+        id={item.id}
+        name={item.full_name}
+        description={item.description}
+        stars={item.stargazers_count}
+        url={item.html_url}
+      />
+    ),
+    []
   );
 
-  const renderFooter = () => {
+  const renderFooter = useCallback(() => {
     if (!allResults.length) return null;
 
     return (
@@ -97,9 +100,9 @@ export default function SearchScreen() {
         </Text>
       </TouchableOpacity>
     );
-  };
+  }, [allResults.length, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  const renderEmpty = () => {
+  const renderEmpty = useCallback(() => {
     if (isLoading) {
       return (
         <View style={styles.centerContainer}>
@@ -126,7 +129,7 @@ export default function SearchScreen() {
     }
 
     return null;
-  };
+  }, [isLoading, error, debouncedInputValue, allResults.length]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -163,6 +166,16 @@ export default function SearchScreen() {
         numColumns={1}
         ListEmptyComponent={renderEmpty}
         ListFooterComponent={renderFooter}
+        removeClippedSubviews={true}
+        maxToRenderPerBatch={10}
+        updateCellsBatchingPeriod={50}
+        initialNumToRender={10}
+        windowSize={5}
+        getItemLayout={(data, index) => ({
+          length: 150,
+          offset: 150 * index,
+          index,
+        })}
       />
     </SafeAreaView>
   );
