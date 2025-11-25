@@ -2,11 +2,19 @@
   "name": "github-repo-viewer",
   "private": true,
   "version": "1.0.0",
-  "workspaces": [
-    "packages/web",
-    "packages/shared",
-    "packages/mobile"
-  ],
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ],
+    "nohoist": [
+      "**/react",
+      "**/react/**",
+      "**/react-dom",
+      "**/react-dom/**",
+      "**/react-native",
+      "**/react-native/**"
+    ]
+  },
   "scripts": {
     "web": "npm run start --workspace web",
     "mobile": "npm run start --workspace mobile"
