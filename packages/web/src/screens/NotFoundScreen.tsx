@@ -1,6 +1,12 @@
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import { colors, fontSizes, space, radii } from "@repo-viewer/shared/dist";
+import {
+  colors,
+  fontSizes,
+  space,
+  radii,
+  labels,
+} from "@repo-viewer/shared/dist";
 import { NavLink } from "../components/NavLink";
 
 const Wrapper = styled.div`
@@ -75,15 +81,13 @@ const BackButton = styled.button`
 const NotFoundScreen = () => (
   <Wrapper>
     <HeaderRow>
-      <NavLink to="/">{`< Back`}</NavLink>
+      <NavLink to="/">{labels.back}</NavLink>
     </HeaderRow>
 
     <View>
       <Code>404</Code>
-      <Title>Page Not Found</Title>
-      <Description>
-        Sorry, the page you're looking for doesn't exist.
-      </Description>
+      <Title>{labels.notFound}</Title>
+      <Description>{labels.notFoundDesc}</Description>
     </View>
   </Wrapper>
 );

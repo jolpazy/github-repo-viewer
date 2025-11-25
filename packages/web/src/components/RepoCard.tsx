@@ -9,7 +9,7 @@ import {
   removeFavorite,
 } from "@repo-viewer/shared";
 
-import { space, fontSizes, radii, colors } from "@repo-viewer/shared";
+import { space, fontSizes, radii, colors, labels } from "@repo-viewer/shared";
 
 type RepoCardProps = {
   id: number;
@@ -107,7 +107,9 @@ const RepoCard = ({ id, name, description, stars }: RepoCardProps) => {
         {name}
       </Name>
       {description && <Description>{description}</Description>}
-      <Stars>⭐ {stars} stars</Stars>
+      <Stars>
+        ⭐ {stars} {labels.stars}
+      </Stars>
     </Card>
   );
 };

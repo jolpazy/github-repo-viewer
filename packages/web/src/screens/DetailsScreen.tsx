@@ -3,7 +3,13 @@ import styled from "styled-components";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRepository } from "@repo-viewer/shared/dist";
 
-import { colors, fontSizes, space, radii } from "@repo-viewer/shared/dist";
+import {
+  colors,
+  fontSizes,
+  space,
+  radii,
+  labels,
+} from "@repo-viewer/shared/dist";
 
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -124,29 +130,33 @@ const DetailsScreen = () => {
   return (
     <Wrapper>
       <HeaderRow>
-        <NavLink to="/">{`< Back`}</NavLink>
+        <NavLink to="/">{labels.back}</NavLink>
 
         <HeartButton onClick={toggleFavorite}>
           {isFavorite ? "❤️" : "🤍"}
         </HeartButton>
       </HeaderRow>
 
-      {isLoading && <p>Loading…</p>}
-      {error && <p>Something went wrong.</p>}
-      {!repo && !isLoading && <p>Repository not found.</p>}
+      {isLoading && <p>{labels.loading}</p>}
+      {error && <p>{labels.error}</p>}
+      {!repo && !isLoading && <p>{labels.repoNotFound}</p>}
 
       {repo && (
         <View>
           <Avatar src={repo.owner.avatar_url} alt={repo.owner.login} />
 
           <Title>{repo.name}</Title>
-          <Owner>by {repo.owner.login}</Owner>
+          <Owner>
+            {labels.by} {repo.owner.login}
+          </Owner>
 
           {repo.description && <Description>{repo.description}</Description>}
-          <Meta>⭐ {repo.stargazers_count} stars</Meta>
+          <Meta>
+            ⭐ {repo.stargazers_count} {labels.stars}
+          </Meta>
 
           <GithubLink href={repo.html_url} target="_blank" rel="noreferrer">
-            View on GitHub
+            {labels.viewOnGithub}
           </GithubLink>
         </View>
       )}

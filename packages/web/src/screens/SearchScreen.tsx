@@ -14,6 +14,7 @@ import {
   radii,
   DEBOUNCE_MS,
   ITEMS_PER_PAGE,
+  labels,
 } from "@repo-viewer/shared/dist";
 
 import { useSelector, useDispatch } from "react-redux";
@@ -211,13 +212,13 @@ const SearchScreen = () => {
   return (
     <Wrapper>
       <Header>
-        <Title>React</Title>
         <Subtitle>
-          {title}
+          {labels.searchTitle}
           {favorites.length > 0 && (
             <>
               {" "}
-              or go to: <FavoritesLink to="/favorites">Favorites</FavoritesLink>
+              {labels.orGoTo}{" "}
+              <FavoritesLink to="/favorites">{labels.favorites}</FavoritesLink>
             </>
           )}
         </Subtitle>
@@ -226,19 +227,21 @@ const SearchScreen = () => {
       <SearchContainer>
         <SearchIcon>🔍</SearchIcon>
         <Input
-          placeholder="Search repositories…"
+          placeholder={labels.searchPlaceholder}
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
         />
       </SearchContainer>
 
       <ResultsWrapper>
-        {isLoading && <Result>Loading…</Result>}
-        {error && <Result>Something went wrong.</Result>}
-
-        <ResultsGrid>
-          {allResults.length > 0 &&
-            allResults.map(
+        {isLoading && <Result>{labels.loading}</Result>}
+        {error && <Result>{labels.error}</Result>}{" "}
+        {debouncedInputValue && !isLoading && allResults.length === 0 && (
+          <Result>{labels.noResults}</Result>
+        )}
+        {allResults.length > 0 && (
+          <ResultsGrid>
+            {allResults.map(
               ({ id, full_name, stargazers_count, html_url, description }) => (
                 <RepoCard
                   id={id}
@@ -250,12 +253,9 @@ const SearchScreen = () => {
                 />
               )
             )}
-        </ResultsGrid>
+          </ResultsGrid>
+        )}
       </ResultsWrapper>
-
-      {debouncedInputValue && !isLoading && allResults.length === 0 && (
-        <Result>No repositories found.</Result>
-      )}
 
       {allResults.length > 0 && (
         <LoadMoreButton
@@ -263,10 +263,10 @@ const SearchScreen = () => {
           onClick={() => fetchNextPage()}
         >
           {isFetchingNextPage
-            ? "Loading…"
+            ? labels.loading
             : hasNextPage
-            ? "Load more"
-            : "No more results"}
+            ? labels.loadMore
+            : labels.noMoreResults}
         </LoadMoreButton>
       )}
     </Wrapper>

@@ -1,8 +1,8 @@
 import styled from "styled-components";
-import { Link } from "react-router-dom";
+
 import { useSelector } from "react-redux";
 import { useQueryClient } from "@tanstack/react-query";
-import { colors, fontSizes, space } from "@repo-viewer/shared/dist";
+import { colors, fontSizes, space, labels } from "@repo-viewer/shared/dist";
 import { RootState } from "@repo-viewer/shared";
 import { useRepository } from "@repo-viewer/shared/dist";
 import RepoCard from "../components/RepoCard";
@@ -55,8 +55,8 @@ const FavoriteRepo = ({ id }: { id: number }) => {
 
   const repo = repoFromCache ?? fetchedRepo;
 
-  if (isLoading) return <Empty>Loading…</Empty>;
-  if (!repo) return <Empty>Repository not found.</Empty>;
+  if (isLoading) return <Empty>{labels.loading}</Empty>;
+  if (!repo) return <Empty>{labels.repoNotFound}</Empty>;
 
   return (
     <RepoCard
@@ -74,10 +74,10 @@ const FavoritesScreen = () => {
 
   return (
     <Wrapper>
-      <NavLink to="/">{`< Back`}</NavLink>
-      <Title>Favorites ❤️</Title>
+      <NavLink to="/">{labels.back}</NavLink>
+      <Title>{labels.favorites} ❤️</Title>
 
-      {favorites.length === 0 && <Empty>No favorites yet</Empty>}
+      {favorites.length === 0 && <Empty>{labels.noFavorites}</Empty>}
 
       <FavoritesGrid>
         {favorites.map((id) => (
