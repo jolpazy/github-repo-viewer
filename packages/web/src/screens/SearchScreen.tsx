@@ -5,9 +5,9 @@ import { debounce } from "lodash";
 import { useSearchRepositories } from "@repo-viewer/shared/dist";
 import RepoCard from "../components/RepoCard";
 import { NavLink } from "../components/NavLink";
+import { GitHubRepository } from "@repo-viewer/shared/dist/";
 
 import {
-  title,
   colors,
   fontSizes,
   space,
@@ -207,7 +207,7 @@ const SearchScreen = () => {
     per_page: ITEMS_PER_PAGE,
   });
 
-  const allResults = data?.pages.flatMap((page) => page.items) ?? [];
+  const allResults = data?.pages.flatMap((page: any) => page.items) ?? [];
 
   return (
     <Wrapper>
@@ -242,7 +242,13 @@ const SearchScreen = () => {
         {allResults.length > 0 && (
           <ResultsGrid>
             {allResults.map(
-              ({ id, full_name, stargazers_count, html_url, description }) => (
+              ({
+                id,
+                full_name,
+                stargazers_count,
+                html_url,
+                description,
+              }: GitHubRepository) => (
                 <RepoCard
                   id={id}
                   key={id}

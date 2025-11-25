@@ -80,7 +80,7 @@ const FavoritesScreen = () => {
       {favorites.length === 0 && <Empty>{labels.noFavorites}</Empty>}
 
       <FavoritesGrid>
-        {favorites.map((id) => (
+        {favorites.map((id: number) => (
           <FavoriteRepo key={id} id={id} />
         ))}
       </FavoritesGrid>
