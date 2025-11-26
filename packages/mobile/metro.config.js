@@ -13,4 +13,11 @@ config.resolver.extraNodeModules = {
   "react-native": path.resolve(__dirname, "node_modules/react-native"),
 };
 
+// Exclude test files from bundle
+config.resolver.blockList = [
+  /.*\.test\.(js|jsx|ts|tsx)$/,
+  /__tests__\/.*/,
+  /.*\.spec\.(js|jsx|ts|tsx)$/,
+];
+
 module.exports = config;

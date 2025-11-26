@@ -87,6 +87,7 @@ export default function DetailsScreen() {
             <Image
               source={{ uri: repo.owner.avatar_url }}
               style={styles.avatar}
+              accessibilityLabel={`${repo.owner.login} avatar`}
             />
 
             <Text style={styles.title}>{repo.name}</Text>
