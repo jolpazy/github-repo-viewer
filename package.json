@@ -16,7 +16,7 @@
     ]
   },
   "scripts": {
-    "web": "npm run start --workspace web",
-    "mobile": "npm run start --workspace mobile"
+    "web": "yarn workspace @repo-viewer/shared build && yarn workspace web start",
+    "mobile": "yarn workspace @repo-viewer/shared build && yarn workspace mobile start"
   }
 }

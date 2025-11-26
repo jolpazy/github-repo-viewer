@@ -132,7 +132,6 @@ const Header = styled.header`
 `;
 
 const ResultsWrapper = styled.div`
-  flex: 1;
   width: 100%;
   box-sizing: border-box;
   overflow-y: auto;
@@ -165,6 +164,13 @@ const ResultsWrapper = styled.div`
 
   scrollbar-width: thin;
   scrollbar-color: ${colors.reactLightGrey} ${colors.reactGrey};
+`;
+
+const ResultsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
 `;
 
 const SearchScreen = () => {
@@ -240,41 +246,40 @@ const SearchScreen = () => {
           <Result>{labels.noResults}</Result>
         )}
         {allResults.length > 0 && (
-          <ResultsGrid>
-            {allResults.map(
-              ({
-                id,
-                full_name,
-                stargazers_count,
-                html_url,
-                description,
-              }: GitHubRepository) => (
-                <RepoCard
-                  id={id}
-                  key={id}
-                  name={full_name}
-                  stars={stargazers_count}
-                  url={html_url}
-                  description={description ?? undefined}
-                />
-              )
-            )}
-          </ResultsGrid>
+          <ResultsContainer>
+            <ResultsGrid>
+              {allResults.map(
+                ({
+                  id,
+                  full_name,
+                  stargazers_count,
+                  html_url,
+                  description,
+                }: GitHubRepository) => (
+                  <RepoCard
+                    id={id}
+                    key={id}
+                    name={full_name}
+                    stars={stargazers_count}
+                    url={html_url}
+                    description={description ?? undefined}
+                  />
+                )
+              )}
+            </ResultsGrid>
+            <LoadMoreButton
+              disabled={isFetchingNextPage || !hasNextPage}
+              onClick={() => fetchNextPage()}
+            >
+              {isFetchingNextPage
+                ? labels.loading
+                : hasNextPage
+                ? labels.loadMore
+                : labels.noMoreResults}
+            </LoadMoreButton>
+          </ResultsContainer>
         )}
       </ResultsWrapper>
-
-      {allResults.length > 0 && (
-        <LoadMoreButton
-          disabled={isFetchingNextPage || !hasNextPage}
-          onClick={() => fetchNextPage()}
-        >
-          {isFetchingNextPage
-            ? labels.loading
-            : hasNextPage
-            ? labels.loadMore
-            : labels.noMoreResults}
-        </LoadMoreButton>
-      )}
     </Wrapper>
   );
 };
