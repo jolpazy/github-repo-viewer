@@ -1,4 +1,10 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import {
+  render,
+  screen,
+  fireEvent,
+  waitFor,
+  act,
+} from "@testing-library/react";
 import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -37,18 +43,22 @@ const createTestQueryClient = () =>
     },
   });
 
-const renderWithProviders = (
+const renderWithProviders = async (
   component: React.ReactElement,
   store = createTestStore(),
   queryClient = createTestQueryClient()
 ) => {
-  return render(
-    <Provider store={store}>
-      <QueryClientProvider client={queryClient}>
-        <BrowserRouter>{component}</BrowserRouter>
-      </QueryClientProvider>
-    </Provider>
-  );
+  let result: any;
+  await act(async () => {
+    result = render(
+      <Provider store={store}>
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>{component}</BrowserRouter>
+        </QueryClientProvider>
+      </Provider>
+    );
+  });
+  return result;
 };
 
 describe("SearchScreen", () => {
@@ -61,11 +71,10 @@ describe("SearchScreen", () => {
   });
 
   afterEach(() => {
-    jest.runOnlyPendingTimers();
     jest.useRealTimers();
   });
 
-  it("renders search input", () => {
+  it("renders search input", async () => {
     mockUseSearchRepositories.mockReturnValue({
       data: undefined,
       isLoading: false,
@@ -75,13 +84,43 @@ describe("SearchScreen", () => {
       error: null,
     });
 
-    renderWithProviders(<SearchScreen />);
+    await renderWithProviders(<SearchScreen />);
     expect(
       screen.getByPlaceholderText(/Search repositories/i)
     ).toBeInTheDocument();
   });
 
-  it("shows loading state", () => {
+  it("renders favorites link", async () => {
+    mockUseSearchRepositories.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      isFetchingNextPage: false,
+      hasNextPage: false,
+      fetchNextPage: jest.fn(),
+      error: null,
+    });
+
+    await renderWithProviders(<SearchScreen />);
+    const favLink = screen.getByText(/Favorites/i);
+    expect(favLink).toBeInTheDocument();
+    expect(favLink.closest("a")).toHaveAttribute("href", "/favorites");
+  });
+
+  it("renders search title", async () => {
+    mockUseSearchRepositories.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      isFetchingNextPage: false,
+      hasNextPage: false,
+      fetchNextPage: jest.fn(),
+      error: null,
+    });
+
+    await renderWithProviders(<SearchScreen />);
+    expect(screen.getByText(/Search github repos/i)).toBeInTheDocument();
+  });
+
+  it("shows loading state", async () => {
     mockUseSearchRepositories.mockReturnValue({
       data: undefined,
       isLoading: true,
@@ -91,11 +130,11 @@ describe("SearchScreen", () => {
       error: null,
     });
 
-    renderWithProviders(<SearchScreen />);
+    await renderWithProviders(<SearchScreen />);
     expect(screen.getByText(/Loading/i)).toBeInTheDocument();
   });
 
-  it("shows error state", () => {
+  it("shows error state", async () => {
     mockUseSearchRepositories.mockReturnValue({
       data: undefined,
       isLoading: false,
@@ -105,11 +144,11 @@ describe("SearchScreen", () => {
       error: new Error("API Error"),
     });
 
-    renderWithProviders(<SearchScreen />);
+    await renderWithProviders(<SearchScreen />);
     expect(screen.getByText(/Something went wrong/i)).toBeInTheDocument();
   });
 
-  it("shows no results message", () => {
+  it("shows no results message", async () => {
     mockUseSearchRepositories.mockReturnValue({
       data: { pages: [{ items: [] }] },
       isLoading: false,
@@ -122,12 +161,22 @@ describe("SearchScreen", () => {
     const store = createTestStore({
       app: { searchQuery: "react", favorites: [] },
     });
-    renderWithProviders(<SearchScreen />, store);
 
-    expect(screen.getByText(/No repositories found/i)).toBeInTheDocument();
+    await renderWithProviders(<SearchScreen />, store);
+
+    const input = screen.getByPlaceholderText(/Search repositories/i);
+
+    await act(async () => {
+      fireEvent.change(input, { target: { value: "react" } });
+      jest.advanceTimersByTime(300);
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText(/No repositories found/i)).toBeInTheDocument();
+    });
   });
 
-  it("displays search results", () => {
+  it("displays search results", async () => {
     const mockRepos = [
       {
         id: 1,
@@ -154,7 +203,7 @@ describe("SearchScreen", () => {
       error: null,
     });
 
-    renderWithProviders(<SearchScreen />);
+    await renderWithProviders(<SearchScreen />);
 
     expect(screen.getByText("facebook/react")).toBeInTheDocument();
     expect(screen.getByText("vuejs/vue")).toBeInTheDocument();
@@ -162,7 +211,7 @@ describe("SearchScreen", () => {
     expect(screen.getByText("Progressive framework")).toBeInTheDocument();
   });
 
-  it("updates search input", () => {
+  it("updates search input", async () => {
     mockUseSearchRepositories.mockReturnValue({
       data: undefined,
       isLoading: false,
@@ -172,10 +221,13 @@ describe("SearchScreen", () => {
       error: null,
     });
 
-    renderWithProviders(<SearchScreen />);
+    await renderWithProviders(<SearchScreen />);
 
     const input = screen.getByPlaceholderText(/Search repositories/i);
-    fireEvent.change(input, { target: { value: "react" } });
+
+    await act(async () => {
+      fireEvent.change(input, { target: { value: "react" } });
+    });
 
     expect(input).toHaveValue("react");
   });
@@ -191,25 +243,25 @@ describe("SearchScreen", () => {
     });
 
     const store = createTestStore();
-    renderWithProviders(<SearchScreen />, store);
+
+    await renderWithProviders(<SearchScreen />, store);
 
     const input = screen.getByPlaceholderText(/Search repositories/i);
 
-    // Type quickly
-    fireEvent.change(input, { target: { value: "r" } });
-    fireEvent.change(input, { target: { value: "re" } });
-    fireEvent.change(input, { target: { value: "rea" } });
-    fireEvent.change(input, { target: { value: "react" } });
-
-    // Advance timers to trigger debounce
-    jest.advanceTimersByTime(300);
+    await act(async () => {
+      fireEvent.change(input, { target: { value: "r" } });
+      fireEvent.change(input, { target: { value: "re" } });
+      fireEvent.change(input, { target: { value: "rea" } });
+      fireEvent.change(input, { target: { value: "react" } });
+      jest.advanceTimersByTime(300);
+    });
 
     await waitFor(() => {
       expect(store.getState().app.searchQuery).toBe("react");
     });
   });
 
-  it("shows load more button when has next page", () => {
+  it("shows load more button when has next page", async () => {
     const mockRepos = [
       {
         id: 1,
@@ -229,12 +281,12 @@ describe("SearchScreen", () => {
       error: null,
     });
 
-    renderWithProviders(<SearchScreen />);
+    await renderWithProviders(<SearchScreen />);
 
     expect(screen.getByText(/Load more/i)).toBeInTheDocument();
   });
 
-  it("calls fetchNextPage when load more is clicked", () => {
+  it("calls fetchNextPage when load more is clicked", async () => {
     const mockFetchNextPage = jest.fn();
     const mockRepos = [
       {
@@ -255,15 +307,18 @@ describe("SearchScreen", () => {
       error: null,
     });
 
-    renderWithProviders(<SearchScreen />);
+    await renderWithProviders(<SearchScreen />);
 
     const loadMoreButton = screen.getByText(/Load more/i);
-    fireEvent.click(loadMoreButton);
+
+    await act(async () => {
+      fireEvent.click(loadMoreButton);
+    });
 
     expect(mockFetchNextPage).toHaveBeenCalledTimes(1);
   });
 
-  it("disables load more button when fetching next page", () => {
+  it("disables load more button when fetching next page", async () => {
     const mockRepos = [
       {
         id: 1,
@@ -283,15 +338,25 @@ describe("SearchScreen", () => {
       error: null,
     });
 
-    renderWithProviders(<SearchScreen />);
+    await renderWithProviders(<SearchScreen />);
 
-    const loadMoreButton = screen.getByRole("button");
+    const loadMoreButton = screen.getByRole("button", { name: /loading/i });
     expect(loadMoreButton).toBeDisabled();
   });
 
-  it("shows favorites link when user has favorites", () => {
+  it("shows no more results when no next page", async () => {
+    const mockRepos = [
+      {
+        id: 1,
+        full_name: "facebook/react",
+        description: "A JavaScript library",
+        stargazers_count: 1000,
+        html_url: "https://github.com/facebook/react",
+      },
+    ];
+
     mockUseSearchRepositories.mockReturnValue({
-      data: undefined,
+      data: { pages: [{ items: mockRepos }] },
       isLoading: false,
       isFetchingNextPage: false,
       hasNextPage: false,
@@ -299,27 +364,8 @@ describe("SearchScreen", () => {
       error: null,
     });
 
-    const store = createTestStore({
-      app: { searchQuery: "", favorites: [1, 2] },
-    });
-    renderWithProviders(<SearchScreen />, store);
+    await renderWithProviders(<SearchScreen />);
 
-    expect(screen.getByText(/Favorites/i)).toBeInTheDocument();
-  });
-
-  it("does not show favorites link when no favorites", () => {
-    mockUseSearchRepositories.mockReturnValue({
-      data: undefined,
-      isLoading: false,
-      isFetchingNextPage: false,
-      hasNextPage: false,
-      fetchNextPage: jest.fn(),
-      error: null,
-    });
-
-    const store = createTestStore({ app: { searchQuery: "", favorites: [] } });
-    renderWithProviders(<SearchScreen />, store);
-
-    expect(screen.queryByText(/Favorites/i)).not.toBeInTheDocument();
+    expect(screen.getByText(/No more results/i)).toBeInTheDocument();
   });
 });

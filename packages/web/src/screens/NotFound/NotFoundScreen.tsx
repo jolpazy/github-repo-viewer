@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
 import {
   colors,
   fontSizes,
@@ -60,22 +59,6 @@ const Description = styled.p`
   font-size: ${fontSizes.md}px;
   opacity: 0.75;
   margin-bottom: ${space.xl}px;
-`;
-
-const BackButton = styled.button`
-  padding: ${space.sm}px ${space.lg}px;
-  font-size: ${fontSizes.md}px;
-  border-radius: ${radii.md}px;
-  background: ${colors.reactBlue};
-  color: ${colors.reactGrey};
-  border: none;
-  cursor: pointer;
-  font-weight: 600;
-  transition: 0.2s ease;
-
-  &:hover {
-    background: ${colors.white};
-  }
 `;
 
 const NotFoundScreen = () => (

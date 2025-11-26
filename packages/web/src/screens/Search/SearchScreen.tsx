@@ -33,20 +33,25 @@ const Wrapper = styled.div`
   overflow: hidden;
 `;
 
-const FavoritesLink = styled(NavLink)`
-  font-size: ${fontSizes.lg}px;
+const HeaderRow = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: ${space.lg}px;
 `;
 
-const Title = styled.h1`
-  font-size: ${fontSizes.xl}px;
-  margin-bottom: ${space.sm}px;
-  margin-top: 0;
+const FavoritesLink = styled(NavLink)`
+  font-size: ${fontSizes.sm}px;
 `;
 
 const Subtitle = styled.p`
   font-size: ${fontSizes.lg}px;
   opacity: 0.85;
   margin-bottom: ${space.xl}px;
+  margin-top: 0;
+  text-align: center;
+  width: 100%;
 `;
 
 const SearchContainer = styled.div`
@@ -58,7 +63,7 @@ const SearchContainer = styled.div`
   align-items: center;
   padding: ${space.sm}px ${space.lg}px;
   gap: ${space.md}px;
-  margin: ${space.xl}px auto;
+  margin: 0 auto ${space.lg}px auto;
 
   &:focus-within {
     opacity: 1;
@@ -114,21 +119,6 @@ const ResultsGrid = styled.div`
   justify-content: center;
   width: 100%;
   max-width: 1200px;
-`;
-
-const Header = styled.header`
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  background: ${colors.reactGrey};
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding-top: ${space.xs}px;
-  padding-bottom: ${space.xs}px;
 `;
 
 const ResultsWrapper = styled.div`
@@ -217,18 +207,11 @@ const SearchScreen = () => {
 
   return (
     <Wrapper>
-      <Header>
-        <Subtitle>
-          {labels.searchTitle}
-          {favorites.length > 0 && (
-            <>
-              {" "}
-              {labels.orGoTo}{" "}
-              <FavoritesLink to="/favorites">{labels.favorites}</FavoritesLink>
-            </>
-          )}
-        </Subtitle>
-      </Header>
+      <HeaderRow>
+        <FavoritesLink to="/favorites">{labels.favorites}</FavoritesLink>
+      </HeaderRow>
+
+      <Subtitle>{labels.searchTitle}</Subtitle>
 
       <SearchContainer>
         <SearchIcon>🔍</SearchIcon>
@@ -241,7 +224,7 @@ const SearchScreen = () => {
 
       <ResultsWrapper>
         {isLoading && <Result>{labels.loading}</Result>}
-        {error && <Result>{labels.error}</Result>}{" "}
+        {error && <Result>{labels.error}</Result>}
         {debouncedInputValue && !isLoading && allResults.length === 0 && (
           <Result>{labels.noResults}</Result>
         )}
