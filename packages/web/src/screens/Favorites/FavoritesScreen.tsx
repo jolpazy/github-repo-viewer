@@ -1,44 +1,11 @@
-import styled from "styled-components";
-
 import { useSelector } from "react-redux";
 import { useQueryClient } from "@tanstack/react-query";
-import { colors, fontSizes, space, labels } from "@repo-viewer/shared/dist";
+import { labels } from "@repo-viewer/shared/dist";
 import { RootState } from "@repo-viewer/shared";
 import { useRepository } from "@repo-viewer/shared/dist";
 import RepoCard from "../../components/RepoCard/RepoCard";
 import { NavLink } from "../../components/NavLink/NavLink";
-
-const Wrapper = styled.div`
-  background-color: ${colors.reactGrey};
-  color: ${colors.white};
-  min-height: 100vh;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: ${space.xl}px;
-`;
-
-const Title = styled.h1`
-  font-size: ${fontSizes.xl}px;
-  margin-bottom: ${space.xl}px;
-  margin-top: 0;
-`;
-
-const Empty = styled.p`
-  font-size: ${fontSizes.md}px;
-  opacity: 0.85;
-  margin-top: ${space.xl}px;
-`;
-
-const FavoritesGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, 350px);
-  gap: ${space.xl}px;
-  justify-content: center;
-  width: 100%;
-  max-width: 1200px;
-`;
+import { Wrapper, Title, Empty, FavoritesGrid } from "./FavoritesScreen.styled";
 
 const FavoriteRepo = ({ id }: { id: number }) => {
   const queryClient = useQueryClient();

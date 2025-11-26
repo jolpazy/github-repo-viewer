@@ -1,16 +1,7 @@
-import { useParams, Link } from "react-router-dom";
-import styled from "styled-components";
+import { useParams } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRepository } from "@repo-viewer/shared/dist";
-
-import {
-  colors,
-  fontSizes,
-  space,
-  radii,
-  labels,
-} from "@repo-viewer/shared/dist";
-
+import { labels } from "@repo-viewer/shared/dist";
 import { useSelector, useDispatch } from "react-redux";
 import {
   RootState,
@@ -19,86 +10,19 @@ import {
   removeFavorite,
 } from "@repo-viewer/shared";
 import { NavLink } from "../../components/NavLink/NavLink";
-
-const Wrapper = styled.div`
-  background-color: ${colors.reactLightGrey};
-  color: ${colors.white};
-  min-height: 100vh;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  padding: ${space.xl}px;
-`;
-
-const HeaderRow = styled.div`
-  width: 100%;
-
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: ${space.lg}px;
-`;
-
-const HeartButton = styled.button`
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  font-size: ${fontSizes.lg}px;
-  padding: 0;
-  color: ${colors.reactBlue};
-
-  &:hover {
-    opacity: 0.8;
-  }
-`;
-
-const Avatar = styled.img`
-  width: 96px;
-  height: 96px;
-  border-radius: ${radii.pill}px;
-  object-fit: cover;
-  margin-bottom: ${space.md}px;
-`;
-
-const View = styled.div`
-  padding: ${space.xl}px;
-  border-radius: ${radii.md}px;
-  max-width: 640px;
-  width: 100%;
-  text-align: center;
-`;
-
-const Title = styled.h1`
-  font-size: ${fontSizes.xl}px;
-  margin-bottom: ${space.sm}px;
-  color: ${colors.reactBlue};
-`;
-
-const Owner = styled.p`
-  font-size: ${fontSizes.sm}px;
-  opacity: 0.8;
-  margin-bottom: ${space.md}px;
-`;
-
-const Description = styled.p`
-  font-size: ${fontSizes.md}px;
-`;
-const Meta = styled.p`
-  font-size: ${fontSizes.sm}px;
-  opacity: 0.8;
-  margin-bottom: ${space.sm}px;
-`;
-
-const GithubLink = styled.a`
-  color: ${colors.reactBlue};
-  text-decoration: none;
-
-  &:hover {
-    text-decoration: underline;
-  }
-`;
+import {
+  Wrapper,
+  HeaderRow,
+  HeartButton,
+  Avatar,
+  View,
+  Title,
+  Owner,
+  Description,
+  Meta,
+  GithubLink,
+  Message,
+} from "./DetailsScreen.styled";
 
 const DetailsScreen = () => {
   const { id } = useParams<{ id: string }>();
@@ -137,9 +61,9 @@ const DetailsScreen = () => {
         </HeartButton>
       </HeaderRow>
 
-      {isLoading && <p>{labels.loading}</p>}
-      {error && <p>{labels.error}</p>}
-      {!repo && !isLoading && <p>{labels.repoNotFound}</p>}
+      {isLoading && <Message>{labels.loading}</Message>}
+      {error && <Message>{labels.error}</Message>}
+      {!repo && !isLoading && <Message>{labels.repoNotFound}</Message>}
 
       {repo && (
         <View>
