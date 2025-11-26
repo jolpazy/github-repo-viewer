@@ -18,7 +18,7 @@ import {
   addFavorite,
   removeFavorite,
 } from "@repo-viewer/shared";
-import { NavLink } from "../components/NavLink";
+import { NavLink } from "../../components/NavLink";
 
 const Wrapper = styled.div`
   background-color: ${colors.reactLightGrey};

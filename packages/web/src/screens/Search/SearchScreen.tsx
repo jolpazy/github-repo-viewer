@@ -3,8 +3,8 @@ import styled from "styled-components";
 
 import { debounce } from "lodash";
 import { useSearchRepositories } from "@repo-viewer/shared/dist";
-import RepoCard from "../components/RepoCard";
-import { NavLink } from "../components/NavLink";
+import RepoCard from "../../components/RepoCard";
+import { NavLink } from "../../components/NavLink";
 import { GitHubRepository } from "@repo-viewer/shared/dist/";
 
 import {

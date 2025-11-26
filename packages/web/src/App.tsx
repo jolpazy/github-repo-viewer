@@ -1,8 +1,8 @@
 import { Routes, Route } from "react-router-dom";
-import SearchScreen from "./screens/SearchScreen";
-import DetailsScreen from "./screens/DetailsScreen";
-import FavoritesScreen from "./screens/FavoritesScreen";
-import NotFoundScreen from "./screens/NotFoundScreen";
+import SearchScreen from "./screens/Search/SearchScreen";
+import DetailsScreen from "./screens/Details/DetailsScreen";
+import FavoritesScreen from "./screens//Favorites/FavoritesScreen";
+import NotFoundScreen from "./screens/NotFound/NotFoundScreen";
 import "./App.css";
 
 function App() {
