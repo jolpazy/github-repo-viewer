@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -7,7 +7,8 @@ import {
   addFavorite,
   removeFavorite,
 } from "@repo-viewer/shared";
-import { space, colors, labels } from "@repo-viewer/shared";
+import { labels } from "@repo-viewer/shared";
+import { styles } from "./RepoCard.styles";
 
 type RepoCardProps = {
   id: number;
@@ -42,7 +43,7 @@ export default function RepoCard({
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity onPress={() => router.push(`/details?id=${id}`)}>
+      <TouchableOpacity onPress={() => router.push(`/${id}`)}>
         <Text style={styles.name} numberOfLines={1}>
           {name}
         </Text>
@@ -60,46 +61,3 @@ export default function RepoCard({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: colors.reactLightGrey,
-    padding: space.lg,
-    paddingTop: space.sm,
-    paddingBottom: space.xl,
-    borderRadius: 8,
-    marginBottom: space.md,
-    alignItems: "center",
-  },
-  topRow: {
-    width: "100%",
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    alignItems: "center",
-  },
-  heartButton: {
-    padding: space.xs,
-  },
-  heart: {
-    fontSize: 20,
-  },
-  name: {
-    fontSize: 20,
-    fontWeight: "700",
-    color: colors.reactBlue,
-    marginBottom: space.xs,
-    textAlign: "center",
-  },
-  description: {
-    fontSize: 14,
-    color: colors.white,
-    opacity: 0.85,
-    marginBottom: space.sm,
-    textAlign: "center",
-  },
-  stars: {
-    fontSize: 14,
-    color: colors.white,
-    opacity: 0.7,
-  },
-});
