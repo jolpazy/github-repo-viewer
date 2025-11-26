@@ -29,6 +29,17 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
+  "jest": {
+    "moduleNameMapper": {
+      "^@repo-viewer/shared$": "<rootDir>/../shared/dist/index.js",
+      "^react$": "<rootDir>/node_modules/react",
+      "^react-dom$": "<rootDir>/node_modules/react-dom",
+      "^react/jsx-runtime$": "<rootDir>/node_modules/react/jsx-runtime"
+    },
+    "transformIgnorePatterns": [
+      "node_modules/(?!(@repo-viewer|@tanstack|axios)/)"
+    ]
+  },
   "eslintConfig": {
     "extends": [
       "react-app",

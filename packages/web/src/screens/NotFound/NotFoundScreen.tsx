@@ -7,7 +7,7 @@ import {
   radii,
   labels,
 } from "@repo-viewer/shared/dist";
-import { NavLink } from "../../components/NavLink";
+import { NavLink } from "../../components/NavLink/NavLink";
 
 const Wrapper = styled.div`
   background-color: ${colors.reactLightGrey};

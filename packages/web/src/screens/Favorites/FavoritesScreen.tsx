@@ -5,8 +5,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { colors, fontSizes, space, labels } from "@repo-viewer/shared/dist";
 import { RootState } from "@repo-viewer/shared";
 import { useRepository } from "@repo-viewer/shared/dist";
-import RepoCard from "../../components/RepoCard";
-import { NavLink } from "../../components/NavLink";
+import RepoCard from "../../components/RepoCard/RepoCard";
+import { NavLink } from "../../components/NavLink/NavLink";
 
 const Wrapper = styled.div`
   background-color: ${colors.reactGrey};
